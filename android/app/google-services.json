@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "945831734574",
+    "project_id": "devbrain-a8b61",
+    "storage_bucket": "devbrain-a8b61.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945831734574:android:233de2bafa6837dc6f5ebf",
+        "android_client_info": {
+          "package_name": "com.devbrainapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASu7C7NRktEPCwyRzvIsCaC40dqa_o3G4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,10 +4,12 @@
  *
  * @format
  */
-
-import React from 'react';
+import 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Image,
+  ImageBackground,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -24,6 +26,21 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import HomeScreen from './src/screens/profile';
+import ProfileScreen from './src/screens/profile';
+import { SV } from './src/custom/customBackground';
+import { Images } from './src/Image';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import BackGround from './src/custom/Backup';
+import StackNavigater from './src/navigation/StackNav';
+import { NavigationContainer ,DefaultTheme} from '@react-navigation/native';
+import { Provider, useSelector } from 'react-redux';
+import { store } from './src/redux/Store';
+import AuthStackNavigator from './src/navigation/AuthStack';
+import AppNavigator from './src/navigation/TabNavigation';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -57,42 +74,35 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [user, setuser]=useState(false)
+  const auth =useSelector((data)=> data?.auth.isLoggedIn)
+ console.log("auth--",auth)
+ const userGet =()=>{
+  if(auth){
+    setuser(true)
+  }else{
+    setuser(false)
+  }
+ }
 
+ useEffect(()=>{
+  userGet()
+ },[auth])
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
+       <NavigationContainer>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+       translucent
+        barStyle="light-content"
+        backgroundColor="transparent"
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      {
+        user?<AppNavigator/> : <AuthStackNavigator/>
+      }
+    </NavigationContainer>
   );
 }
 
