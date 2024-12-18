@@ -1,7 +1,7 @@
 export const Images ={
-BackGround: require("./pngs/grade2.png"),
-Travelimage: require("./pngs/travel.png"),
-BeachImage: require("./pngs/beach.png"),
+BackGround: require("./pngs/bgi.png"),
+Travelimage: require("./pngs/travelers.png"),
+BeachImage: require("./pngs/beachimage.png"),
 arrow: require("./pngs/arrowBack.png"),
 addtocart: require("./pngs/addcart.png"),
 cart: require("./pngs/cartsimple.png"),
