@@ -39,7 +39,7 @@ const ProfileScreen = ({ navigation }: HomeStackScreenProps<"Profile">) => {
             fontSize: 20,
             fontWeight: "bold"
           }}>
-            BottomSheet
+            BottomSheet--
           </Text>
         </Pressable>
         {/* <BottomSheet
