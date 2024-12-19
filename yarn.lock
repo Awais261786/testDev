@@ -3344,9 +3344,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app@npm:^21.6.0":
-  version: 21.6.0
-  resolution: "@react-native-firebase/app@npm:21.6.0"
+"@react-native-firebase/app@npm:21.6.1":
+  version: 21.6.1
+  resolution: "@react-native-firebase/app@npm:21.6.1"
   dependencies:
     firebase: 10.13.2
   peerDependencies:
@@ -3356,7 +3356,7 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 00dda8faed064eb126a973ba565eb8eeff8df06c8afe470538c86527aa1eac0bc185349845fb08f9d32eb71938f3f25c23325d8080d9e591c8f7099b219536d3
+  checksum: c828043db6b8dd80dafcc79157381ce7a6cba447ba2a662dc58ac3fa53d919ecd5e2df84904be481487350bccbab21a802fb75acdf7ac216f886f1d7ff72cb7b
   languageName: node
   linkType: hard
 
@@ -3375,16 +3375,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/database@npm:^20.4.0":
-  version: 20.4.0
-  resolution: "@react-native-firebase/database@npm:20.4.0"
+"@react-native-firebase/database@npm:latest":
+  version: 21.6.1
+  resolution: "@react-native-firebase/database@npm:21.6.1"
   peerDependencies:
-    "@react-native-firebase/app": 20.4.0
-  checksum: 3650f2338abfe413458704512cf3d7c4fea6f12c48dc73e2dde2229e64056bd9304e145a848711ec5178c67b780487325f2129fd02b87e9bd2ae71af0d0c2a82
+    "@react-native-firebase/app": 21.6.1
+  checksum: 8c82aa1b8547a490814ebb551e5bd708f7344cf2085fe6f95d1533e0e8d22f4801fede4771330a2cc931ed09d889a19d92299accc4910bf051ff929add6107bf
   languageName: node
   linkType: hard
 
-"@react-native-firebase/firestore@npm:^21.6.1":
+"@react-native-firebase/firestore@npm:latest":
   version: 21.6.1
   resolution: "@react-native-firebase/firestore@npm:21.6.1"
   peerDependencies:
@@ -3563,6 +3563,13 @@ __metadata:
   version: 0.75.2
   resolution: "@react-native/gradle-plugin@npm:0.75.2"
   checksum: 7b1fbc2dba386f2b7ec009a05d3ea508051d6002f095fc9c9aa412e9c51f5d9c1e0b416e0fc01be3e1e847c43d348d403baf9f73cea3b9c6635916109c033ec7
+  languageName: node
+  linkType: hard
+
+"@react-native/gradle-plugin@npm:^0.76.5":
+  version: 0.76.5
+  resolution: "@react-native/gradle-plugin@npm:0.76.5"
+  checksum: 814c96884a172eebed74a5f5aff9191efd32126f841cb36ef3fe3539691902128bfa93d9a105c6f742648992a4aa47595047d109175ae08330a5296a7d9613a4
   languageName: node
   linkType: hard
 
@@ -4192,12 +4199,13 @@ __metadata:
     "@babel/runtime": ^7.20.0
     "@gorhom/bottom-sheet": ^5
     "@react-native-async-storage/async-storage": ^1.24.0
-    "@react-native-firebase/app": ^21.6.0
+    "@react-native-firebase/app": 21.6.1
     "@react-native-firebase/auth": ^21.6.0
-    "@react-native-firebase/database": ^20.4.0
-    "@react-native-firebase/firestore": ^21.6.1
+    "@react-native-firebase/database": latest
+    "@react-native-firebase/firestore": latest
     "@react-native/babel-preset": 0.75.2
     "@react-native/eslint-config": 0.75.2
+    "@react-native/gradle-plugin": ^0.76.5
     "@react-native/metro-config": 0.75.2
     "@react-native/typescript-config": 0.75.2
     "@react-navigation/bottom-tabs": ^7.0.6
@@ -4212,8 +4220,8 @@ __metadata:
     prettier: 2.8.8
     react: 18.3.1
     react-native: 0.75.2
-    react-native-gesture-handler: ^2.21.2
-    react-native-maps: ^1.20.1
+    react-native-gesture-handler: latest
+    react-native-maps: latest
     react-native-raw-bottom-sheet: ^3.0.0
     react-native-reanimated: ^3.16.5
     react-native-safe-area-context: ^4.14.0
@@ -9413,7 +9421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:^2.21.2":
+"react-native-gesture-handler@npm:latest":
   version: 2.21.2
   resolution: "react-native-gesture-handler@npm:2.21.2"
   dependencies:
@@ -9428,7 +9436,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-maps@npm:^1.20.1":
+"react-native-maps@npm:latest":
   version: 1.20.1
   resolution: "react-native-maps@npm:1.20.1"
   dependencies:
