@@ -1,11 +1,8 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:java:android,deps:node:.,deps:ruby:.,package_manager:yarn:,test:jest:,tool:gradle:
 version: 2.1
 orbs:
   node: circleci/node@5
 jobs:
   test-node:
-    # Install node dependencies and run tests
     executor: node/default
     environment:
       JEST_JUNIT_OUTPUT_DIR: ./test-results/
@@ -20,6 +17,7 @@ jobs:
           command: yarn run test --ci --runInBand --reporters=default --reporters=jest-junit
       - store_test_results:
           path: ./test-results/
+
   test-java:
     docker:
       - image: cimg/openjdk:17.0
@@ -27,6 +25,11 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      - run:
+          name: Install node dependencies
+          command: |
+            cd ~/project
+            yarn install
       - run:
           name: Calculate cache key
           command: |-
@@ -45,20 +48,15 @@ jobs:
       - store_artifacts:
           path: build/reports
   deploy:
-    # This is an example deploy job, not actually used by the workflow
     docker:
       - image: cimg/base:stable
     steps:
-      # Replace this with steps to deploy to users
       - run:
           name: deploy
           command: '#e.g. ./deploy.sh'
+
 workflows:
   build-and-test:
     jobs:
       - test-node
       - test-java
-    # - deploy:
-    #     requires:
-    #       - test-node
-    #       - test-java
