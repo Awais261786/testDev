@@ -8,15 +8,12 @@ jobs:
       JEST_JUNIT_OUTPUT_DIR: ./test-results/
     steps:
       - checkout
-      # Check Node.js version and update if necessary
+      # Ensure Node.js is installed with a supported version (Node.js 18 or 20)
       - run:
-          name: Check Node.js version
-          command: node -v
-      - run:
-          name: Install Node.js 16.x (or a newer version)
+          name: Install Node.js 20
           command: |
-            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -  # Install Node.js 16
-            apt-get install -y nodejs
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
       # Install Yarn
       - run:
           name: Install Yarn
@@ -41,11 +38,12 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      # Ensure Node.js and Yarn are installed
       - run:
           name: Install Node.js and Yarn
           command: |
-            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -  # Install Node.js 16
-            apt-get install -y nodejs
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
             curl -o- -L https://yarnpkg.com/install.sh | bash
             export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
             yarn install
