@@ -2902,14 +2902,14 @@ PODS:
   - RecaptchaInterop (100.0.0)
   - RNCAsyncStorage (1.24.0):
     - React-Core
-  - RNFBApp (21.6.0):
+  - RNFBApp (21.6.1):
     - Firebase/CoreOnly (= 11.5.0)
     - React-Core
   - RNFBAuth (21.6.0):
     - Firebase/Auth (= 11.5.0)
     - React-Core
     - RNFBApp
-  - RNFBDatabase (20.4.0):
+  - RNFBDatabase (21.6.1):
     - Firebase/Database (= 11.5.0)
     - React-Core
     - RNFBApp
@@ -3400,9 +3400,9 @@ SPEC CHECKSUMS:
   ReactCommon: 8da2bad9c1e5901f7b5484e42e59578edeece142
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
-  RNFBApp: 148efc8715a42c85cdf2d8458a500f26866a7a7b
+  RNFBApp: 1de631bffe154f4f8b56f8dbfb13d6305d658e97
   RNFBAuth: d2c9d05747e53b52566489b2b3361ff1f13c38b8
-  RNFBDatabase: caec6dd854eb3eaa66315843bdbca4bbf44b3f19
+  RNFBDatabase: 62b4463efb565eacbfccaa6db20544e0b095ecee
   RNFBFirestore: 040e9607af616bec5d3903f5fa6a1a4e5dd0e4bd
   RNGestureHandler: 5cf4d43fd8d31b236a6d8e392aa48432f01650aa
   RNReanimated: ae857007e4f8ec2ec70385a5e90c786f21b6022f
