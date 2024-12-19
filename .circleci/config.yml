@@ -8,12 +8,22 @@ jobs:
       JEST_JUNIT_OUTPUT_DIR: ./test-results/
     steps:
       - checkout
+      # Check Node.js version and update if necessary
+      - run:
+          name: Check Node.js version
+          command: node -v
+      - run:
+          name: Install Node.js 16.x (or a newer version)
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -  # Install Node.js 16
+            apt-get install -y nodejs
       # Install Yarn
       - run:
           name: Install Yarn
           command: |
             curl -o- -L https://yarnpkg.com/install.sh | bash
             export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+      # Install dependencies with yarn
       - node/install-packages:
           pkg-manager: yarn
       - run:
@@ -32,12 +42,13 @@ jobs:
       - checkout:
           path: ~/project
       - run:
-          name: Install node dependencies
+          name: Install Node.js and Yarn
           command: |
-            cd ~/project
-            curl -o- -L https://yarnpkg.com/install.sh | bash  # Install Yarn
+            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -  # Install Node.js 16
+            apt-get install -y nodejs
+            curl -o- -L https://yarnpkg.com/install.sh | bash
             export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-            yarn install  # Install node modules
+            yarn install
       - run:
           name: Calculate cache key
           command: |-
