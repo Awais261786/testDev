@@ -8,19 +8,18 @@ jobs:
       JEST_JUNIT_OUTPUT_DIR: ./test-results/
     steps:
       - checkout
-      # Ensure Node.js is installed with a supported version (Node.js 18 or 20)
+      # Install Node.js and Yarn (if necessary, as we've seen in prior issues)
       - run:
           name: Install Node.js 20
           command: |
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
-      # Install Yarn
       - run:
           name: Install Yarn
           command: |
             curl -o- -L https://yarnpkg.com/install.sh | bash
             export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-      # Install dependencies with yarn
+      # Install dependencies
       - node/install-packages:
           pkg-manager: yarn
       - run:
@@ -35,27 +34,33 @@ jobs:
     docker:
       - image: cimg/openjdk:17.0
     working_directory: ~/project/android
+    environment:
+      ANDROID_HOME: /opt/android-sdk  # Set Android SDK location
+      ANDROID_SDK_ROOT: /opt/android-sdk
+      PATH: /opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:$PATH  # Add SDK tools to PATH
     steps:
       - checkout:
           path: ~/project
-      # Ensure Node.js and Yarn are installed
+      # Install Android SDK if not already installed
       - run:
-          name: Install Node.js and Yarn
+          name: Install Android SDK
           command: |
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-            curl -o- -L https://yarnpkg.com/install.sh | bash
-            export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-            yarn install
+            sudo apt-get update
+            sudo apt-get install -y wget
+            wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip
+            unzip commandlinetools.zip -d /opt/android-sdk
+            yes | /opt/android-sdk/tools/bin/sdkmanager --licenses
+            /opt/android-sdk/tools/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
+            export ANDROID_HOME=/opt/android-sdk
+            export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH
+      # Set SDK location in `local.properties`
       - run:
-          name: Calculate cache key
-          command: |-
-            find . -name 'pom.xml' -o -name 'gradlew*' -o -name '*.gradle*' | \
-                    sort | xargs cat > /tmp/CIRCLECI_CACHE_KEY
-      - restore_cache:
-          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+          name: Set Android SDK location in local.properties
+          command: echo "sdk.dir=/opt/android-sdk" > android/local.properties
+      # Run Gradle build
       - run:
-          command: ./gradlew check
+          name: Run Gradle build
+          command: ./gradlew build
       - store_test_results:
           path: build/test-results
       - save_cache:
@@ -64,6 +69,7 @@ jobs:
             - ~/.gradle/caches
       - store_artifacts:
           path: build/reports
+
   deploy:
     docker:
       - image: cimg/base:stable
