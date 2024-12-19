@@ -1,111 +1,62 @@
 version: 2.1
+orbs:
+  node: circleci/node@5
 jobs:
-  node:
-    working_directory: ~/demo-react-native
-    docker:
-      - image: cimg/node:20.18.0
-
-    steps:
-      - checkout
-      - restore_cache:
-          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
-
-      - restore_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-
-      - run: yarn install
-
-      - save_cache:
-          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
-          paths:
-            - ~/.cache/yarn
-
-      - save_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-          paths:
-            - node_modules
-
-      - persist_to_workspace:
-          root: ~/demo-react-native
-          paths:
-            - node_modules
-
-      - store_test_results:
-          path: test-results
-
-      - store_artifacts:
-          path: test-results
-
-  macos-build-and-test:
-    working_directory: ~/demo-react-native
-    macos:
-      xcode: 16.0.0
+  test-node:
+    executor: node/default
     environment:
-      FL_OUTPUT_DIR: output
-      FASTLANE_LANE: build
+      JEST_JUNIT_OUTPUT_DIR: ./test-results/
     steps:
       - checkout
-      - restore_cache:
-          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
-
-      - restore_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-
-      - run: yarn install
-
-      - save_cache:
-          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
-          paths:
-            - ~/.cache/yarn
-
-      - save_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-          paths:
-            - node_modules
-
-      - restore_cache:
-          key: bundle-v1-{{ checksum "ios/Gemfile.lock" }}-{{ arch }}
-
-      - restore_cache:
-          key: pods-v1-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
-
+      # Install dependencies
+      - node/install-packages:
+          pkg-manager: yarn
       - run:
-          command: pod install
-          working_directory: ios
-
+          command: yarn add jest-junit
       - run:
-          command: bundle install
-          working_directory: ios
-
-      - save_cache:
-          key: bundle-v1-{{ checksum "ios/Gemfile.lock" }}-{{ arch }}
-          paths:
-            - vendor/bundle
-
-      - save_cache:
-          key: pods-v1-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
-          paths:
-            - ios/Pods
-
-      - run:
-          name: Fastlane
-          command: bundle exec fastlane $FASTLANE_LANE
-          working_directory: ios
-
-      - store_artifacts:
-          path: output
-
+          name: Run tests
+          command: yarn run test --ci --runInBand --reporters=default --reporters=jest-junit
       - store_test_results:
-          path: output/scan
+          path: ./test-results/
+
+  test-java:
+    docker:
+      - image: cimg/android:2023.10  # Use the cimg/android image with SDK pre-installed
+    working_directory: ~/project/android
+    environment:
+      ANDROID_HOME: /opt/android-sdk  # Set Android SDK location
+      ANDROID_SDK_ROOT: /opt/android-sdk
+      PATH: /opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:$PATH  # Add SDK tools to PATH
+    steps:
+      - checkout:
+          path: ~/project
+      # Set SDK location in `local.properties`
+      - run:
+          name: Set Android SDK location in local.properties
+          command: echo "sdk.dir=/opt/android-sdk" > android/local.properties
+      # Run Gradle build
+      - run:
+          name: Run Gradle build
+          command: ./gradlew build
+      - store_test_results:
+          path: build/test-results
+      - save_cache:
+          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+          paths:
+            - ~/.gradle/caches
+      - store_artifacts:
+          path: build/reports
+
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: deploy
+          command: '#e.g. ./deploy.sh'
 
 workflows:
-  node-android-ios:
+  build-and-test:
     jobs:
-      - node:
-          filters:
-            branches:
-              only:
-                - dev
-      - macos-build-and-test:
-          requires:
-            - node
+      - test-node
+      - test-java
