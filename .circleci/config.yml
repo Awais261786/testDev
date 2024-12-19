@@ -1,63 +1,89 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:java:android,deps:node:.,deps:ruby:.,package_manager:yarn:,test:jest:,tool:gradle:
 version: 2.1
+
 orbs:
-  node: circleci/node@5
+  node: circleci/node@5  # Orb to manage Node.js dependencies
+  # Add the Android orb (or use openjdk Docker image directly, as you are now)
+  java: circleci/openjdk@2.0.0  # This is an optional orb if you want to simplify Java/Android setup
+
 jobs:
+  # Node.js test job
   test-node:
-    # Install node dependencies and run tests
     executor: node/default
     environment:
       JEST_JUNIT_OUTPUT_DIR: ./test-results/
     steps:
       - checkout
+      # Install Node.js dependencies (yarn)
       - node/install-packages:
           pkg-manager: yarn
+      # Ensure @react-native/gradle-plugin is installed
       - run:
-          command: yarn add jest-junit
+          name: Ensure @react-native/gradle-plugin is installed
+          command: yarn add @react-native/gradle-plugin
+      # Run the tests and generate Jest report
       - run:
           name: Run tests
           command: yarn run test --ci --runInBand --reporters=default --reporters=jest-junit
       - store_test_results:
           path: ./test-results/
+
+  # Android (Java) test and build job
   test-java:
     docker:
-      - image: cimg/openjdk:17.0
-    working_directory: ~/project/android
+      - image: cimg/openjdk:17.0  # OpenJDK 17 Docker image, commonly used for Android builds
+    working_directory: ~/repo/android
     steps:
-      - checkout:
-          path: ~/project
-      - run:
-          name: Calculate cache key
-          command: |-
-            find . -name 'pom.xml' -o -name 'gradlew*' -o -name '*.gradle*' | \
-                    sort | xargs cat > /tmp/CIRCLECI_CACHE_KEY
+      - checkout
+          path: ~/repo
+      # Install node modules for Android (ensure React Native dependencies are installed in the android directory)
       - restore_cache:
-          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+          key: node-modules-v1-{{ checksum "package.json" }}
       - run:
-          command: ./gradlew check
-      - store_test_results:
-          path: build/test-results
+          name: Install dependencies
+          command: |
+            cd android
+            yarn install  # Ensure React Native and Android dependencies are installed
+      # Restore Gradle cache for faster builds
+      - restore_cache:
+          key: gradle-cache-v1-{{ checksum "android/build.gradle" }}
+      # Run the Android build (you can replace with ./gradlew assembleRelease for release build)
+      - run:
+          name: Run Gradle Build
+          command: |
+            cd android
+            ./gradlew clean
+            ./gradlew build
+      # Save node_modules cache for the next job
       - save_cache:
-          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+          key: node-modules-v1-{{ checksum "package.json" }}
+          paths:
+            - android/node_modules
+      # Save Gradle cache for faster subsequent builds
+      - save_cache:
+          key: gradle-cache-v1-{{ checksum "android/build.gradle" }}
           paths:
             - ~/.gradle/caches
+      - store_test_results:
+          path: android/build/test-results
       - store_artifacts:
-          path: build/reports
+          path: android/build/reports
+
+  # Example deploy job (optional, not used in this workflow)
   deploy:
-    # This is an example deploy job, not actually used by the workflow
     docker:
       - image: cimg/base:stable
     steps:
-      # Replace this with steps to deploy to users
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: Deploy
+          command: "#e.g. ./deploy.sh"
+
 workflows:
+  version: 2
   build-and-test:
     jobs:
       - test-node
       - test-java
+    # Uncomment the following if you want deploy to happen after tests
     # - deploy:
     #     requires:
     #       - test-node
