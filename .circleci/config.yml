@@ -8,17 +8,6 @@ jobs:
       JEST_JUNIT_OUTPUT_DIR: ./test-results/
     steps:
       - checkout
-      # Install Node.js and Yarn (if necessary, as we've seen in prior issues)
-      - run:
-          name: Install Node.js 20
-          command: |
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-      - run:
-          name: Install Yarn
-          command: |
-            curl -o- -L https://yarnpkg.com/install.sh | bash
-            export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
       # Install dependencies
       - node/install-packages:
           pkg-manager: yarn
@@ -32,7 +21,7 @@ jobs:
 
   test-java:
     docker:
-      - image: cimg/openjdk:17.0
+      - image: cimg/android:2023.10  # Use the cimg/android image with SDK pre-installed
     working_directory: ~/project/android
     environment:
       ANDROID_HOME: /opt/android-sdk  # Set Android SDK location
@@ -41,18 +30,6 @@ jobs:
     steps:
       - checkout:
           path: ~/project
-      # Install Android SDK if not already installed
-      - run:
-          name: Install Android SDK
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y wget
-            wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip
-            unzip commandlinetools.zip -d /opt/android-sdk
-            yes | /opt/android-sdk/tools/bin/sdkmanager --licenses
-            /opt/android-sdk/tools/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
-            export ANDROID_HOME=/opt/android-sdk
-            export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH
       # Set SDK location in `local.properties`
       - run:
           name: Set Android SDK location in local.properties
